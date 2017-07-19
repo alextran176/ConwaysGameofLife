@@ -1,5 +1,5 @@
 # ConwaysGameofLife
-Conways Game of Life implemented in JavaScript
+Conway's Game of Life implemented in JavaScript
 
 My first ever HTML/Javascript project.  CGOL single threaded Javascript implementation.  Move mouse over canvas to draw more live cells.
 
