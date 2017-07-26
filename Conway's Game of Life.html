@@ -8,6 +8,7 @@
 <!--
 <h1>Conway's Game of Life with Drawing Board features</h1>
 width = "700" height="700"
+haahahhaha
 -->
 
 <canvas id = "myCanvas"  style = "background-color: #000020; padding: 0; margin: auto; display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></canvas>
@@ -15,7 +16,7 @@ width = "700" height="700"
 <script type="text/javascript">
 	var c = document.getElementById("myCanvas");
 	var ctx = c.getContext("2d");
-	ctx.canvas.width = Math.round(window.innerHeight/1.15);
+	ctx.canvas.width = Math.round(window.innerWidth/1.15);
 	ctx.canvas.height = Math.round(window.innerHeight/1.15);
 	ctx.fillStyle = "#C0C0C0";
 	var canvasWidth = c.width;
@@ -62,10 +63,10 @@ width = "700" height="700"
 			for (var j = 1; j <= gridWidth-2; j++) { //iterate through columns
 		    	if(grid[i][j] != newGrid[i][j]){ //fillRect only what has changed.  (e.g. video compression) gives an appx. 7-10% FPS improvement
 		    		if (grid[i][j] == 1) {
-		     			ctx.fillRect(i-1, j-1, 1, 1); //fill a 1x1 pixel rectangle with color.
+		     			ctx.fillRect(j-1, i-1, 1, 1); //fill a 1x1 pixel rectangle with color.
 		    		}
 		    		if(grid[i][j] == 0){
-		    			ctx.clearRect(i-1, j-1, 1, 1);
+		    			ctx.clearRect(j-1, i-1, 1, 1);
 		    		}
 		    	}
 		  	}
@@ -87,7 +88,7 @@ width = "700" height="700"
 	function fillRandom(density) { //fill the grid randomly with specified density in CANVAS region of matrix
 	  	for (var i = 1; i <= gridHeight - 2; i++) { //iterate through rows of canvas region
 	    	for (var j = 1; j <= gridWidth - 2; j++) { //iterate through columns of canvas region
-	    		if(i > 10 && i < gridHeight - 10 && j >10 && j < gridHeight - 10) {
+	    		//if(i > 10 && i < gridHeight - 10 && j >10 && j < gridHeight - 10) {
 	    			var val = Math.random();
 	    			if(val <= density) { //sets a certain probability (e.g. 70% or 10%)
 	    				grid[i][j] = Math.ceil(val);
@@ -95,10 +96,10 @@ width = "700" height="700"
 	    			else {
 	    				grid[i][j] = Math.floor(val);
 	    			}
-	    		}
-	    		else {
-	    			grid[i][j] = 0; //VERY IMPORTANT.  DEFINES ALL OTHER VALUES = 0 or else you cannot perform operations on undefined grid slots.
-	    		}
+	    		//}
+	    		//else {
+	    			//grid[i][j] = 0; //VERY IMPORTANT.  DEFINES ALL OTHER VALUES = 0 or else you cannot perform operations on undefined grid slots.
+	    		//}
 	    	}
 	  	}
 	  
@@ -142,9 +143,9 @@ width = "700" height="700"
 	}
 
 	function updateGrid() { //*******IS MANIPULATING A GLOBAL VARIABLE**************
-		for (var i = 1; i <= gridWidth - 2; i++) { //iterate through rows of canvas
+		for (var i = 1; i <= gridHeight - 2; i++) { //iterate through rows of canvas
 			//console.log("updateGrid, i =", i);
-			for (var j = 1; j <= gridHeight - 2; j++) { //iterate through cols of canvas
+			for (var j = 1; j <= gridWidth - 2; j++) { //iterate through cols of canvas
 				var totalCells = 0;
 				totalCells += grid[i - 1][j - 1]; //top left
 				totalCells += grid[i - 1][j]; //top
@@ -230,9 +231,11 @@ width = "700" height="700"
 			var x = Math.round(canCoordx + xOffset);
 			var y = Math.round(canCoordy + yOffset);
 			if(x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight ){
-				grid[x][y] = 1;
+				grid[y][x] = 1;
 			}
 		}
+
+		console.log(canCoordx, canCoordy);
 
 	}
 </script>
