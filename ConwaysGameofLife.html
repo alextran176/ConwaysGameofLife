@@ -9,6 +9,7 @@
 <h1>Conway's Game of Life with Drawing Board features</h1>
 width = "700" height="700"
 haahahhaha
+Change made 6/26/17 11:26:50
 -->
 
 <canvas id = "myCanvas"  style = "background-color: #000020; padding: 0; margin: auto; display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></canvas>
@@ -16,7 +17,7 @@ haahahhaha
 <script type="text/javascript">
 	var c = document.getElementById("myCanvas");
 	var ctx = c.getContext("2d");
-	ctx.canvas.width = Math.round(window.innerWidth/1.15);
+	ctx.canvas.width = Math.round(window.innerHeight/1.15);
 	ctx.canvas.height = Math.round(window.innerHeight/1.15);
 	ctx.fillStyle = "#C0C0C0";
 	var canvasWidth = c.width;
@@ -42,6 +43,7 @@ haahahhaha
 	tick();
 
 	function tick() {
+		requestAnimationFrame(tick);
 		var ts = new Date().getTime();
 
 		//*****************************//
@@ -52,7 +54,7 @@ haahahhaha
 	  	var tf = new Date().getTime();
 	  	var updaterate = 1000/(tf-ts);
 	  	var timepassed = (tf-t0)/1000;
-	  	requestAnimationFrame(tick);
+	  	//requestAnimationFrame(tick);
 	}
 
 	function drawGrid() { //draw the contents of the grid onto a canvas
