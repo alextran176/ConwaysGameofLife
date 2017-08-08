@@ -10,6 +10,7 @@
 width = "700" height="700"
 haahahhaha
 Change made 6/26/17 11:26:50
+Now on Windows!!!
 -->
 
 <canvas id = "myCanvas"  style = "background-color: #000020; padding: 0; margin: auto; display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></canvas>
@@ -29,8 +30,8 @@ Change made 6/26/17 11:26:50
 
 	var grid = createArray(gridHeight); //javascript array just defines an array of arrays, all of undefined length.
 	var newGrid = createArray(gridHeight);
-	
-	
+
+
 	c.addEventListener("mousemove", trackCoord, false); //tracks cursor coordinate and drops random live cells within a certain radius of the cursor
 
 
@@ -104,7 +105,7 @@ Change made 6/26/17 11:26:50
 	    		//}
 	    	}
 	  	}
-	  
+
 
 	  mirror();
 	}
@@ -131,14 +132,14 @@ Change made 6/26/17 11:26:50
 		var t0 = new Date().getTime();
 		//*****************************//
 		updateGrid(); //determine new state, then insert new state into newGrid.  Now newGrid contains the new state canvas
-		mirrorGrid(); //mirror sides and corners of newGrid onto itself in preparation for next updateGrid() function call.  
+		mirrorGrid(); //mirror sides and corners of newGrid onto itself in preparation for next updateGrid() function call.
 		//*****************************//
 		var tf = new Date().getTime();
 	  	var updaterate = 1000/(tf-t0);
 	  	//console.log(updaterate);
-		
+
 		/*
-		updateGrid and mirrorGrid are only manipulating "grid" and "newGrid" global variables.  
+		updateGrid and mirrorGrid are only manipulating "grid" and "newGrid" global variables.
 		They do not return anything.
 		They are just helper functions to make the code look nicer and easier to understand
 		*/
@@ -180,7 +181,7 @@ Change made 6/26/17 11:26:50
 		//*/
 		/*
 		At the end of this function, newGrid canvas region is now updated with the new board state.
-		But the outer edges are not mirrored, so next updateGrid() function call will lead to incorrect following board state (on the edges).   
+		But the outer edges are not mirrored, so next updateGrid() function call will lead to incorrect following board state (on the edges).
 		Now call mirrorGrid() to fix this.
 		*/
 	}
@@ -209,13 +210,13 @@ Change made 6/26/17 11:26:50
 
 	}
 
-	
+
 /*Drawing Board functions go down here*/
 
 	function trackCoord(asd){
 		var radius = 20;
 		var density = 150;
-		
+
 		var xc = asd.clientX;
 		var yc = asd.clientY;
 		var boundingRect = myCanvas.getBoundingClientRect();
@@ -240,14 +241,3 @@ Change made 6/26/17 11:26:50
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
