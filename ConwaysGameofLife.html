@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Conway's Game of Life</title>
+</head>
+<body style="margin:0; background-color: #000020;">
+
+<!--
+<h1>Conway's Game of Life with Drawing Board features</h1>
+width = "700" height="700"
+haahahhaha
+Change made 6/26/17 11:26:50
+Now on Windows!!!
+-->
+
+<canvas id = "myCanvas"  style = "background-color: #000020; padding: 0; margin: auto; display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></canvas>
+
+<script type="text/javascript">
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+	ctx.canvas.width = Math.round(window.innerHeight/1.15);
+	ctx.canvas.height = Math.round(window.innerHeight/1.15);
+	ctx.fillStyle = "#C0C0C0";
+	var canvasWidth = c.width;
+	var canvasHeight = c.height;
+	var gridWidth = canvasWidth + 2; //grid is .....2 indexes larger than canvas to account for mirroring edges ON BOTH SIDES
+	var gridHeight = canvasHeight + 2;
+	var framenum = 0;
+	var t0 = new Date().getTime(); //program start time
+
+	var grid = createArray(gridHeight); //javascript array just defines an array of arrays, all of undefined length.
+	var newGrid = createArray(gridHeight);
+
+
+	c.addEventListener("mousemove", trackCoord, false); //tracks cursor coordinate and drops random live cells within a certain radius of the cursor
+
+
+	fillRandom(.06); //fills initial state and mirrors
+	//drawGrid();
+	var t_draw_0 = new Date().getTime();
+	iterateGrid(); //iterateGrid a few times to avoid drawing the abrupt settling to stable cell count
+	iterateGrid();
+	iterateGrid();
+	tick();
+
+	function tick() {
+		requestAnimationFrame(tick);
+		var ts = new Date().getTime();
+
+		//*****************************//
+	  	drawGrid();
+	  	iterateGrid();
+	  	//*****************************//
+
+	  	var tf = new Date().getTime();
+	  	var updaterate = 1000/(tf-ts);
+	  	var timepassed = (tf-t0)/1000;
+	  	//requestAnimationFrame(tick);
+	}
+
+	function drawGrid() { //draw the contents of the grid onto a canvas
+		var t0 = new Date().getTime();
+		//ctx.clearRect(0, 0, gridHeight, gridWidth); //this should clear the canvas ahead of each redraw
+		//ctx.fillRect(0,0, gridHeight, gridWidth);
+		for (var i = 1; i <= gridHeight-2; i++) { //iterate through rows
+			for (var j = 1; j <= gridWidth-2; j++) { //iterate through columns
+		    	if(grid[i][j] != newGrid[i][j]){ //fillRect only what has changed.  (e.g. video compression) gives an appx. 7-10% FPS improvement
+		    		if (grid[i][j] == 1) {
+		     			ctx.fillRect(j-1, i-1, 1, 1); //fill a 1x1 pixel rectangle with color.
+		    		}
+		    		if(grid[i][j] == 0){
+		    			ctx.clearRect(j-1, i-1, 1, 1);
+		    		}
+		    	}
+		  	}
+		}
+		var tf = new Date().getTime();
+	  	var updaterate = 1000/(tf-t0);
+	}
+
+
+	function createArray(rows) { //this just creates an array of a specified number of arrays.  Allows us to manipulate within the array realm...
+		//but if you specify an index beyond that of what we defined; it will simply output NaN (or something like that i think)
+	  	var arr = [];
+	  	for (var i = 0; i < rows; i++) {
+	    	arr[i] = [];
+	  	}
+	  	return arr;
+	}
+
+	function fillRandom(density) { //fill the grid randomly with specified density in CANVAS region of matrix
+	  	for (var i = 1; i <= gridHeight - 2; i++) { //iterate through rows of canvas region
+	    	for (var j = 1; j <= gridWidth - 2; j++) { //iterate through columns of canvas region
+	    		//if(i > 10 && i < gridHeight - 10 && j >10 && j < gridHeight - 10) {
+	    			var val = Math.random();
+	    			if(val <= density) { //sets a certain probability (e.g. 70% or 10%)
+	    				grid[i][j] = Math.ceil(val);
+	    			}
+	    			else {
+	    				grid[i][j] = Math.floor(val);
+	    			}
+	    		//}
+	    		//else {
+	    			//grid[i][j] = 0; //VERY IMPORTANT.  DEFINES ALL OTHER VALUES = 0 or else you cannot perform operations on undefined grid slots.
+	    		//}
+	    	}
+	  	}
+
+
+	  mirror();
+	}
+
+	function mirror() { //********IS MANIPULATING A GLOBAL VARIABLE*************
+		grid[0][0] = grid[gridHeight - 2][gridWidth - 2]; //top left mirror = bot right canvas
+		grid[gridHeight - 1][0] = grid[1][gridWidth - 2]; //bot left mirror = top right canvas
+
+		grid[0][gridWidth-1] = grid[gridHeight - 2][1]; //top right mirror = bot left canvas
+		grid[gridHeight - 1][gridWidth-1] = grid[1][1]; //bot right mirror = top left canvas
+
+		for(var i = 1; i <= gridWidth-2; i++) {//iterate through cols of grid, defining mirrored values to corners and top/bot rows
+			grid[0][i] = grid[gridHeight - 2][i]; //top row mirror = bot row canvas
+			grid[gridHeight-1][i] = grid[1][i]; //bot row mirrow = top row canvas
+		}
+
+		for(var i = 1; i <= gridHeight - 2; i++) { //iterate through rows of canvas to mirror left/right edges, corners already done above
+			grid[i][0] = grid[i][gridWidth - 2]; //left col mirror = right col canvas
+			grid[i][gridWidth - 1] = grid[i][1]; //right col mirror = left col canvas
+		}
+	}
+
+	function iterateGrid(){
+		var t0 = new Date().getTime();
+		//*****************************//
+		updateGrid(); //determine new state, then insert new state into newGrid.  Now newGrid contains the new state canvas
+		mirrorGrid(); //mirror sides and corners of newGrid onto itself in preparation for next updateGrid() function call.
+		//*****************************//
+		var tf = new Date().getTime();
+	  	var updaterate = 1000/(tf-t0);
+	  	//console.log(updaterate);
+
+		/*
+		updateGrid and mirrorGrid are only manipulating "grid" and "newGrid" global variables.
+		They do not return anything.
+		They are just helper functions to make the code look nicer and easier to understand
+		*/
+	}
+
+	function updateGrid() { //*******IS MANIPULATING A GLOBAL VARIABLE**************
+		for (var i = 1; i <= gridHeight - 2; i++) { //iterate through rows of canvas
+			//console.log("updateGrid, i =", i);
+			for (var j = 1; j <= gridWidth - 2; j++) { //iterate through cols of canvas
+				var totalCells = 0;
+				totalCells += grid[i - 1][j - 1]; //top left
+				totalCells += grid[i - 1][j]; //top
+				totalCells += grid[i -1][j + 1]; //top right
+
+				totalCells += grid[i][j - 1]; //left
+				totalCells += grid[i][j + 1]; //right
+				totalCells += grid[i + 1][j - 1]; //bot left
+				totalCells += grid[i + 1][j]; //bot
+				totalCells += grid[i + 1][j + 1]; //bot right
+
+ 				if(grid[i][j] == 1) { //if cell is alive
+ 					if(totalCells == 2 || totalCells == 3) {
+						newGrid[i][j] = 1;
+					}
+					else {
+						newGrid[i][j] = 0;
+					}
+ 				}
+				if(grid[i][j] == 0){ //if cell is dead
+					if(totalCells == 3){
+						newGrid[i][j] = 1;
+					}
+					else {
+						newGrid[i][j] = 0;
+					}
+				}
+			}
+		}
+		//*/
+		/*
+		At the end of this function, newGrid canvas region is now updated with the new board state.
+		But the outer edges are not mirrored, so next updateGrid() function call will lead to incorrect following board state (on the edges).
+		Now call mirrorGrid() to fix this.
+		*/
+	}
+
+	function mirrorGrid() { //********IS MANIPULATING A GLOBAL VARIABLE*************
+		newGrid[0][0] = newGrid[gridHeight - 2][gridWidth - 2]; //top left mirror = bot right canvas
+		newGrid[gridHeight - 1][0] = newGrid[1][gridWidth - 2]; //bot left mirror = top right canvas
+
+		newGrid[0][gridWidth-1] = newGrid[gridHeight - 2][1]; //top right mirror = bot left canvas
+		newGrid[gridHeight - 1][gridWidth-1] = newGrid[1][1]; //bot right mirror = top left canvas
+
+		for(var i = 1; i <= gridWidth-2; i++) {//iterate through cols of grid, defining mirrored values to corners and top/bot rows
+			 //mirror top and bot rows
+			newGrid[0][i] = newGrid[gridHeight - 2][i]; //top row mirror = bot row canvas
+			newGrid[gridHeight-1][i] = newGrid[1][i]; //bot row mirrow = top row canvas
+		}
+
+		for(var i = 1; i <= gridHeight - 2; i++) { //iterate through rows of canvas to mirror left/right edges, corners already done above
+			newGrid[i][0] = newGrid[i][gridWidth - 2]; //left col mirror = right col canvas
+			newGrid[i][gridWidth - 1] = newGrid[i][1]; //right col mirror = left col canvas
+		}
+
+		var temp = grid;
+		grid = newGrid;
+		newGrid = temp; //NEED TO CLEAR newGrid BEFORE THE NEXT ITERATION!!!!!!!!!!!!!!!!!!!!!!
+
+	}
+
+
+/*Drawing Board functions go down here*/
+
+	function trackCoord(asd){
+		var radius = 20;
+		var density = 150;
+
+		var xc = asd.clientX;
+		var yc = asd.clientY;
+		var boundingRect = myCanvas.getBoundingClientRect();
+		var canCoordx = xc - boundingRect.left;
+		var canCoordy = yc - boundingRect.top;
+
+		for (var i = 0; i < density; i++){
+			var randomAngle = Math.random() * 2*Math.PI;
+			var randomRadius = Math.random() * radius;
+			var xOffset = Math.cos(randomAngle)*randomRadius;
+			var yOffset = Math.sin(randomAngle)*randomRadius;
+			var x = Math.round(canCoordx + xOffset);
+			var y = Math.round(canCoordy + yOffset);
+			if(x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight ){
+				grid[y][x] = 1;
+			}
+		}
+
+		console.log(canCoordx, canCoordy);
+
+	}
+</script>
+</body>
+</html>
